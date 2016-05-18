@@ -10,7 +10,7 @@
 
 NAME    = 	wolf3d
 
-CC	= 	gcc -g
+CC	= 	gcc
 
 INC     =       ./include/
 
@@ -42,15 +42,15 @@ OBJ	= 	$(SRC:.c=.o)
 
 RM	= 	rm -f
 
-all:	$(NAME)
+all:		$(NAME)
 
-$(NAME): $(OBJ)
-	$(CC) $(OBJ) -o $(NAME) $(LDFLAGS) 
+$(NAME):	$(OBJ)
+		$(CC) $(OBJ) -o $(NAME) $(LDFLAGS) 
 
 clean:
-	$(RM) $(OBJ)
+		$(RM) $(OBJ)
 
-fclean:	clean
-	$(RM) $(NAME)
+fclean:		clean
+		$(RM) $(NAME)
 
-re:	fclean all
+re:		fclean all
