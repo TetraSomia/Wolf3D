@@ -14,10 +14,11 @@ CC	= 	gcc
 
 INC     =       ./include/
 
-CFLAGS 	=	-I/home/${USER}/.froot/include/ \
-		-L/home/${USER}/.froot/lib/ \
-		-llapin -lsfml-audio -lsfml-graphics -lsfml-window \
+LDFLAGS	+=	-llapin -lsfml-audio -lsfml-graphics -lsfml-window \
 		-lsfml-system -lstdc++ -ldl -lm \
+		-L/home/${USER}/.froot/lib/
+
+CFLAGS	+=	-I/home/${USER}/.froot/include/ \
 		-I$(INC) \
 		-W -Wall -Werror -ansi -pedantic
 
@@ -38,15 +39,15 @@ OBJ	= 	$(SRC:.c=.o)
 
 RM	= 	rm -f
 
-all:	$(NAME)
+all:		$(NAME)
 
-$(NAME): $(OBJ)
-	$(CC) $(OBJ) -o $(NAME) $(CFLAGS) 
+$(NAME):	$(OBJ)
+		$(CC) $(OBJ) -o $(NAME) $(LDFLAGS) 
 
 clean:
-	$(RM) $(OBJ)
+		$(RM) $(OBJ)
 
-fclean:	clean
-	$(RM) $(NAME)
+fclean:		clean
+		$(RM) $(NAME)
 
-re:	fclean all
+re:		fclean all
