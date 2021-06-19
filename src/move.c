@@ -5,7 +5,7 @@
 ** Login   <arthur.josso@epitech.eu>
 ** 
 ** Started on  Mon Dec  7 13:55:26 2015 Tetra
-** Last update Tue Dec 22 13:06:23 2015 Tetra
+** Last update Sun Dec 13 18:49:05 2015 Tetra
 */
 
 #include <math.h>
@@ -48,16 +48,14 @@ void    move(t_win *win, char move)
   x1 = win->me.x;
   y1 = win->me.y;
   get_next_pos(&win->me, move);
-  if (win->map.map[(int)win->me.x][(int)win->me.y] != '1')
-    {
-      win->me.x = x1;
-      win->me.y = y1;
-    }
+  if (win->map.map[(int)win->me.x][(int)y1] != '1')
+    win->me.x = x1;
   else
-    {
-      win->me.x = x0;
-      win->me.y = y0;
-    }
+    win->me.x = x0;
+  if (win->map.map[(int)x1][(int)win->me.y] != '1')
+    win->me.y = y1;
+  else
+    win->me.y = y0;
 }
 
 void	go_left(t_win *win)

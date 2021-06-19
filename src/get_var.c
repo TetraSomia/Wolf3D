@@ -5,7 +5,7 @@
 ** Login   <arthur.josso@epitech.eu>
 ** 
 ** Started on  Mon Dec  7 19:38:35 2015 Tetra
-** Last update Mon Dec  7 19:45:35 2015 Tetra
+** Last update Fri Dec 11 13:47:29 2015 Tetra
 */
 
 #include <math.h>
@@ -29,22 +29,22 @@ float   get_k(float a, float a0, float va)
   return ((a - a0) / va);
 }
 
-int     get_x(t_win *win, float k, float va, float a0)
+float	get_x(t_win *win, float k, float va, float a0)
 {
   float result;
 
   result = k * va + a0;
   if (result >= win->map.width || result < 0)
     result = -1;
-  return ((int)result);
+  return (result);
 }
 
-int     get_y(t_win *win, float k, float va, float a0)
+float	get_y(t_win *win, float k, float va, float a0)
 {
   float result;
 
   result = k * va + a0;
   if (result >= win->map.height || result < 0)
     result = -1;
-  return ((int)result);
+  return (result);
 }

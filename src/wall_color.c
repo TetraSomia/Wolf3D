@@ -5,7 +5,7 @@
 ** Login   <arthur.josso@epitech.eu>
 ** 
 ** Started on  Mon Dec  7 19:45:21 2015 Tetra
-** Last update Fri Dec 11 18:33:29 2015 Tetra
+** Last update Fri Dec 25 17:49:17 2015 Tetra
 */
 
 #include "wolf.h"
@@ -22,16 +22,65 @@ void    set_cols(t_win *win)
   win->cols.ground.argb[ALPHA_CMP] = 255;
 }
 
-void    set_wall_color(t_win *win, float k)
+void	put_in_black(t_bunny_pixelarray *pix)
 {
-  unsigned char col;
+  t_bunny_position	pos;
+  t_color		col;
 
-  if (k <= W_Y)
-    col = (k * 200) / W_Y + 55;
-  else
-    col = 255;
-  win->cols.wall.argb[RED_CMP] = col;
-  win->cols.wall.argb[BLUE_CMP] = col;
-  win->cols.wall.argb[GREEN_CMP] = col;
-  win->cols.wall.argb[ALPHA_CMP] = 255;
+  pos.x = 0;
+  col.full = BLACK;
+  col.argb[ALPHA_CMP] = 0;
+  while (pos.x < pix->clipable.clip_width)
+    {
+      pos.y = 0;
+      while (pos.y < pix->clipable.clip_height)
+	{
+	  tekpixel(pix, &pos, &col);
+	  pos.y++;
+	}
+      pos.x++;
+    }
+}
+
+void	set_ground(t_win *win)
+{
+  t_bunny_position	pos;
+  t_color		col;
+  unsigned char		lvl;
+
+  pos.y = W_Y2;
+  col.argb[ALPHA_CMP] = 255;
+  while (pos.y < W_Y)
+    {
+      pos.x = 0;
+      while (pos.x < W_X)
+	{
+	  lvl = MAP((float)pos.y, W_Y2, W_Y, 0, 50);
+	  col.argb[RED_CMP] = lvl;
+	  col.argb[GREEN_CMP] = lvl;
+	  col.argb[BLUE_CMP] = lvl;
+	  tekpixel(win->array, &pos, &col);
+	  pos.x++;
+	}
+      pos.y++;
+    }
+}
+
+void	fill_wall(t_win *win,
+		  t_bunny_pixelarray *wall,
+		  t_bunny_position *pos,
+		  float k)
+{
+  t_bunny_position      p;
+  t_color               col;
+
+  p.y = MAP((float)pos->y, (float)(W_Y2 - k), (float)(W_Y2 + k),
+	    0.0, (float)wall->clipable.clip_height);
+  p.x = win->me.ratio * (float)wall->clipable.clip_width - 0.5;
+  k = k <= W_Y2 ? k : W_Y2;
+  col.full = tekgetpixel(wall, &p);
+  col.argb[RED_CMP] = MAP(k, 0, W_Y2, 20, col.argb[RED_CMP]);
+  col.argb[BLUE_CMP] = MAP(k, 0, W_Y2, 20, col.argb[BLUE_CMP]);
+  col.argb[GREEN_CMP] = MAP(k, 0, W_Y2, 20, col.argb[GREEN_CMP]);
+  tekpixel(win->array, pos, &col);
 }

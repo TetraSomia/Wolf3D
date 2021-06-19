@@ -5,7 +5,7 @@
 ** Login   <arthur.josso@epitech.eu>
 ** 
 ** Started on  Wed Nov 11 13:09:56 2015 josso_a
-** Last update Fri Dec 11 18:32:11 2015 Tetra
+** Last update Fri Dec 11 18:24:08 2015 Tetra
 */
 
 #include <unistd.h>
@@ -51,7 +51,7 @@ long    my_getnbr(const char *str)
   int   size;
   long  result;
   int   i;
-  long  mult;
+  long	mult;
 
   result = 0;
   mult = 1;

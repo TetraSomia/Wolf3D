@@ -5,22 +5,22 @@
 ## Login   <arthur.josso@epitech.eu>
 ## 
 ## Started on  Thu Dec  3 18:17:06 2015 Tetra
-## Last update Wed Dec  9 19:16:38 2015 Tetra
+## Last update Sat Dec 12 20:46:57 2015 Tetra
 ##
 
 NAME    = 	wolf3d
 
 CC	= 	gcc
 
-INC     =       ./include/
+INC     =       -I./include/ -I./liblapin/include/
 
-LDFLAGS	+=	-llapin -lsfml-audio -lsfml-graphics -lsfml-window \
-		-lsfml-system -lstdc++ -ldl -lm \
-		-L/home/${USER}/.froot/lib/
+LDFLAGS	+=	-L./liblapin -llapin \
+                -lsfml-audio -lsfml-graphics \
+                -lsfml-window -lsfml-system \
+                -lstdc++ -ldl -lm
 
-CFLAGS	+=	-I/home/${USER}/.froot/include/ \
-		-I$(INC) \
-		-W -Wall -Werror -ansi -pedantic
+CFLAGS	+=	$(INC) \
+		-W -Wall -Wextra
 
 SRC	= 	src/main.c \
 		src/wolf.c \
@@ -31,6 +31,9 @@ SRC	= 	src/main.c \
 		src/wall_color.c \
 		src/get_var.c \
 		src/err.c \
+		src/load_bmp.c \
+		src/tekgetpixel.c \
+		src/sprite.c \
 		tcore/tekpixel.c \
 		tcore/vecnorm.c \
 		tcore/go.c

@@ -5,7 +5,7 @@
 ** Login   <arthur.josso@epitech.eu>
 ** 
 ** Started on  Tue Dec  8 10:36:06 2015 Tetra
-** Last update Thu Dec 10 18:42:52 2015 Tetra
+** Last update Sun Dec 13 17:32:27 2015 Tetra
 */
 
 #include "wolf.h"
@@ -26,7 +26,8 @@ int			check_valid(t_win *win)
       p.y = 0;
       while (p.y < win->map.height)
 	{
-	  if (win->map.map[p.x][p.y] != '1' && win->map.map[p.x][p.y] != '0')
+	  if (win->map.map[p.x][p.y] != '1' && win->map.map[p.x][p.y] != '0'
+	      && win->map.map[p.x][p.y] != '2')
 	    return (err("Invalid map\n"));
 	  p.y++;
 	}

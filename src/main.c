@@ -5,7 +5,7 @@
 ** Login   <arthur.josso@epitech.eu>
 ** 
 ** Started on  Tue Nov 10 14:16:13 2015 josso_a
-** Last update Fri Dec 25 18:04:19 2015 Tetra
+** Last update Fri Dec 25 18:05:36 2015 Tetra
 */
 
 #include "wolf.h"
@@ -48,23 +48,42 @@ t_bunny_response        mainloop(void *data)
   origin.y = 0;
   win = data;
   move_me(win);
+  set_ground(win);
   draw_wall(win);
+  draw_sprite(win->array, &win->texture.torch);
+  draw_sprite(win->array, &win->texture.heart);
   bunny_blit(&win->win->buffer, &win->array->clipable, &origin);
   bunny_display(win->win);
   return (GO_ON);
+}
+
+int	init(t_win *win, int ac, char **av)
+{
+  if ((win->win = bunny_start(W_X, W_Y, false, "wolfd3d")) == NULL)
+    return (1);
+  if ((win->array = bunny_new_pixelarray(W_X, W_Y)) == NULL)
+    return (1);
+  if (ac == 2 && set_data(av[1], "level1", win) == -1)
+    return (1);
+  else if (ac != 2 && set_def_map(win) == 1)
+    return (1);
+  if (set_torch(&win->texture.torch) == 1
+      || set_heart(&win->texture.heart) == 1)
+    return (1);
+  if ((win->texture.wall = load_bitmap("ressources/wall.bmp")) == NULL)
+    return (1);
+  if ((win->texture.sky = load_bitmap("ressources/night.bmp")) == NULL)
+    return (1);
+  if ((win->texture.door = load_bitmap("ressources/door.bmp")) == NULL)
+    return (1);
+  return (0);
 }
 
 int	main(int ac, char **av)
 {
   t_win	win;
 
-  if ((win.win = bunny_start(W_X, W_Y, false, "wolfd3d")) == NULL)
-    return (1);
-  if ((win.array = bunny_new_pixelarray(W_X, W_Y)) == NULL)
-    return (1);
-  if (ac == 2 && set_data(av[1], "level1", &win) == -1)
-    return (1);
-  else if (ac != 2 && set_def_map(&win) == 1)
+  if (init(&win, ac, av) == 1)
     return (1);
   set_cols(&win);
   bunny_set_key_response(&press_key);
@@ -72,6 +91,8 @@ int	main(int ac, char **av)
   bunny_loop(win.win, 60, &win);
   free_map(&win.map);
   bunny_delete_clipable(&win.array->clipable);
+  bunny_delete_clipable(&win.texture.wall->clipable);
+  bunny_delete_clipable(&win.texture.sky->clipable);
   bunny_stop(win.win);
   return (0);
 }

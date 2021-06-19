@@ -5,7 +5,7 @@
 ** Login   <arthur.josso@epitech.eu>
 ** 
 ** Started on  Thu Dec  3 18:28:54 2015 Tetra
-** Last update Fri Dec 11 18:34:14 2015 Tetra
+** Last update Sun Dec 13 17:24:32 2015 Tetra
 */
 
 #ifndef WOLF_H_
@@ -13,14 +13,15 @@
 
 #include <lapin.h>
 
+#define W_X (1024)
 #define W_Y (768)
 #define W_Y2 (W_Y / 2)
-#define W_X (1024)
-#define SEG (0.5)
-#define D (1)
-#define MOVE (0.02)
-#define ROT (1)
-#define RAD(deg) (deg * M_PI / 180)
+#define SEG (2.5)
+#define D (3.5)
+#define MOVE (0.05)
+#define ROT (2)
+#define RAD(deg) ((deg) * M_PI / 180)
+#define MAP(x, ba, ea, bb, eb) ((((ba - x) / (ba - ea)) * (eb - bb)) + bb)
 
 typedef struct s_cols
 {
@@ -33,15 +34,36 @@ typedef struct s_me
 {
   float x;
   float y;
+  float ratio;
   int	a;
+  char	wall_type;
 } t_me;
 
 typedef struct s_map
 {
-  int height;
-  int width;
-  char **map;
+  int	height;
+  int	width;
+  char	**map;
 } t_map;
+
+typedef struct s_sprite
+{
+  int width;
+  int nb_frame;
+  float act_frame;
+  t_bunny_position beg;
+  t_bunny_position end;
+  t_bunny_pixelarray *pix;
+} t_sprite;
+
+typedef struct s_texture
+{
+  t_bunny_pixelarray *wall;
+  t_bunny_pixelarray *sky;
+  t_bunny_pixelarray *door;
+  t_sprite torch;
+  t_sprite heart;
+} t_texture;
 
 typedef struct s_win
 {
@@ -50,6 +72,7 @@ typedef struct s_win
   struct s_me me;
   struct s_map map;
   struct s_cols cols;
+  struct s_texture texture;
 } t_win;
 
 /*
@@ -62,16 +85,17 @@ int	draw_wall(t_win *win);
 ** tekpixel.c
 */
 
-void    tekpixel(t_bunny_pixelarray *pix,
+void	tekpixel(t_bunny_pixelarray *pix,
 		 t_bunny_position *p,
 		 t_color *c);
+unsigned int	tekgetpixel(t_bunny_pixelarray *pix,
+			    t_bunny_position *p);
 
 /*
 ** default_map.c
 */
 
 int	set_def_map(t_win *win);
-void	set_moves(t_me *me);
 void    free_map(t_map *map);
 
 /*
@@ -113,15 +137,20 @@ int     my_getnbr(const char *str);
 
 void    set_xy(t_win *win, float *x1, float *y1, float x);
 float   get_k(float a, float a0, float va);
-int     get_x(t_win *win, float k, float va, float a0);
-int     get_y(t_win *win, float k, float va, float a0);
+float	get_x(t_win *win, float k, float va, float a0);
+float	get_y(t_win *win, float k, float va, float a0);
 
 /*
 ** wall_color.c
 */
 
-void    set_wall_color(t_win *win, float k);
 void    set_cols(t_win *win);
+void	put_in_black(t_bunny_pixelarray *pix);
+void	set_ground(t_win *win);
+void	fill_wall(t_win *win,
+		  t_bunny_pixelarray *wall,
+		  t_bunny_position *pos,
+		  float k);
 
 /*
 ** err.c
@@ -129,5 +158,38 @@ void    set_cols(t_win *win);
 
 int     err(char *s);
 int	check(t_win *win);
+
+/*
+** sprites
+*/
+
+void    draw_sprite(t_bunny_pixelarray *pix, t_sprite *sprite);
+int     set_torch(t_sprite *torch);
+int     set_heart(t_sprite *heart);
+
+/*
+** load_bmp.c
+*/
+
+typedef struct s_bmp
+{
+  unsigned short magic;
+  unsigned int  size;
+  unsigned int  none;
+  unsigned int  start;
+  unsigned int  header_size;
+  unsigned int  width;
+  unsigned int  height;
+  unsigned short nb_plan;
+  unsigned short bpp;
+  unsigned int  compression;
+  unsigned int  img_size;
+  unsigned int  ppm_width;
+  unsigned int  ppm_height;
+  unsigned int  nb_col_pal;
+  unsigned int  nb_col_imp;
+} __attribute__ ((packed)) t_bmp;
+
+t_bunny_pixelarray      *load_bitmap(const char *file);
 
 #endif

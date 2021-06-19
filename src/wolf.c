@@ -5,7 +5,7 @@
 ** Login   <arthur.josso@epitech.eu>
 ** 
 ** Started on  Thu Dec  3 20:40:00 2015 Tetra
-** Last update Wed Dec  9 19:33:19 2015 Tetra
+** Last update Sun Dec 13 17:24:03 2015 Tetra
 */
 
 #include <math.h>
@@ -16,7 +16,8 @@ void	test_x(t_win *win, float vx, float vy, float *k_min)
   int	i;
   int   back;
   float k;
-  int   y;
+  float	y;
+  char	wall_type;
 
   i = 0;
   while (vx != 0 && i < win->map.width)
@@ -26,9 +27,14 @@ void	test_x(t_win *win, float vx, float vy, float *k_min)
       y = get_y(win, k, vy, win->me.y);
       if (win->me.x >= i)
 	back = 1;
-      if (y != -1 && i - back != -1 && win->map.map[(int)i - back][y] == '1'
+      if (y != -1 && i - back != -1
+	  && (wall_type = win->map.map[(int)i - back][(int)y]) != '0'
 	  && k >= 0 && k < *k_min)
-	*k_min = k;
+	{
+	  *k_min = k;
+	  win->me.ratio = back != 1 ? 1 - (y - (int)y) : y - (int)y;
+	  win->me.wall_type = wall_type;
+	}
       i++;
     }
 }
@@ -38,7 +44,8 @@ void    test_y(t_win *win, float vx, float vy, float *k_min)
   int   i;
   int   back;
   float k;
-  int   x;
+  float	x;
+  char	wall_type;
 
   i = 0;
   while (vy != 0 && i < win->map.height)
@@ -48,9 +55,14 @@ void    test_y(t_win *win, float vx, float vy, float *k_min)
       x = get_x(win, k, vx, win->me.x);
       if (win->me.y >= i)
 	back = 1;
-      if (x != -1 && i - back != -1 && win->map.map[x][(int)i - back] == '1'
+      if (x != -1 && i - back != -1
+	  && (wall_type = win->map.map[(int)x][(int)i - back]) != '0'
 	  && k >= 0 && k < *k_min)
-	*k_min = k;
+	{
+	  *k_min = k;
+	  win->me.ratio = back == 1 ? 1 - (x - (int)x) : x - (int)x;
+	  win->me.wall_type = wall_type;
+	}
       i++;
     }
 }
@@ -67,12 +79,25 @@ float	set_k(t_win *win, float vx, float vy)
 
 void	wall_gen(t_win *win, t_bunny_position *pos, float k)
 {
+  t_bunny_position	p;
+  t_color		col;
+
   if (pos->y < (W_Y2) - k)
-    tekpixel(win->array, pos, &win->cols.sky);
-  else if ((W_Y2) - k <=  pos->y && pos->y <= (W_Y2) + k)
-    tekpixel(win->array, pos, &win->cols.wall);
-  else
-    tekpixel(win->array, pos, &win->cols.ground);
+    {
+      p.y = MAP((float)pos->y, 0.0, (float)W_Y2,
+		0.0, (float)win->texture.sky->clipable.clip_height);
+      p.x = MAP((float)pos->x, 0.0, (float)W_X,
+		0.0, (float)win->texture.sky->clipable.clip_width);
+      col.full = tekgetpixel(win->texture.sky, &p);
+      tekpixel(win->array, pos, &col);
+    }
+  else if (W_Y2 - k <=  pos->y && pos->y <= W_Y2 + k)
+    {
+      if (win->me.wall_type == '1')
+	fill_wall(win, win->texture.wall, pos, k);
+      else if (win->me.wall_type == '2')
+	fill_wall(win, win->texture.door, pos, k);
+    }
   pos->y++;
 }
 
@@ -90,7 +115,6 @@ int	draw_wall(t_win *win)
       k = set_k(win, vx, vy);
       k *= sqrt(vx * vx + vy * vy);
       k = W_Y / k;
-      set_wall_color(win, k);
       k /= 2;
       pos.y = 0;
       while (pos.y < W_Y)
